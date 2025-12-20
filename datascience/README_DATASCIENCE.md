@@ -2,6 +2,9 @@
 
 Módulo responsável por análise de dados, preparação, criação do modelo preditivo e disponibilização do modelo através de um **microserviço FastAPI**.
 
+## 🗺️ Arquitetura do Projeto (End-to-End)
+![Diagrama de Arquitetura](docs/diagrama.png)
+
 O objetivo é prever se um voo será **Pontual (0)** ou **Atrasado (1)** com base em seus atributos.
 
 ---
@@ -26,14 +29,14 @@ O objetivo é prever se um voo será **Pontual (0)** ou **Atrasado (1)** com bas
 # 🧱 2. Estrutura da pasta datascience
 
 ```
+🧱 2. Estrutura da pasta datascience
+
 datascience
-│── notebooks/            → Jupyter Notebooks de EDA e modelagem
-│── dataset/              → Arquivos CSV usados no projeto
-│── model/                → Modelo exportado (.joblib)
-│── service/              → Microserviço FastAPI (produção)
-│   │── app.py
-│   │── requirements.txt
-│   │── README_MICROSERVICE.md
+│── notebooks/        → Notebooks de EDA, Feature Engineering e Treinamento
+│── docs/             → Diagrama de arquitetura e documentação visual
+│── model/            → Documentação e link para o modelo (.joblib) no Drive
+│── sql/              → Scripts de extração e refino no BigQuery
+│── service/          → Microserviço FastAPI (produção)
 ```
 
 ---
