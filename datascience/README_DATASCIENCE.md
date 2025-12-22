@@ -99,5 +99,5 @@ O serviço está preparado para rodar em containers Docker, facilitando o deploy
 
 👥 Responsável e Autoria
 Este módulo de Data Science e Engenharia de Dados foi desenvolvido por:
-Sueli da Hora — Analytics Engineer (Modelagem, SQL e Arquitetura).
+Sueli da Hora — Analytics Engineer (Machine Learning, Modelagem Preditiva, SQL e Arquitetura).
 
