@@ -31,8 +31,7 @@ O objetivo é prever se um voo será **Pontual (0)** ou **Atrasado (1)** com bas
 
 ---
 
-3. Tecnologias Utilizadas
-
+🧠 3. Tecnologias Utilizadas
 Linguagem: Python 3.10+
 
 Manipulação de Dados: Pandas, NumPy
@@ -63,19 +62,18 @@ json
 ```
 ---
 
-🧪 5. Pipeline de Desenvolvimento
+## 🧪 5. Pipeline de Desenvolvimento
 
-1. EDA: Identificação de padrões e análise de features (Notebook eda_model.ipynb).
+1. **EDA**: Identificação de padrões e análise de features (Notebook `eda_model.ipynb`).
+2. **Feature Engineering**: Criação de variáveis de tempo e volume de tráfego.
+3. **Treinamento**: Modelo Random Forest salvo via Joblib.
 
-2. Feature Engineering: Criação de variáveis de tempo e volume de tráfego.
+> [cite_start]**📌 Nota:** O arquivo deve ser salvo obrigatoriamente no diretório: `datascience/model/modelo_atraso_voo.joblib`[cite: 35, 93].
+>
+> [cite_start]**⚠️ Importante:** O link externo do Drive é para fins exclusivos de **demonstração** durante o Hackathon.
 
-3. Treinamento: Modelo Random Forest salvo via Joblib.
-
- . ** Nota: O arquivo deve ser salvo obrigatoriamente em: ** datascience/model/modelo_atraso_voo.joblib.
-
- . **Importante: O link externo do Drive é para fins exclusivos de demonstração.**
-
-4. FastAPI: O arquivo app.py carrega o modelo e retorna a previsão (0 ou 1) + a probabilidade.
+4. [cite_start]**FastAPI**: O arquivo `app.py` carrega o modelo e retorna a previsão (0 ou 1) junto à probabilidade associada[cite: 53, 98].
+---
 
 
 ⚙️ 6. Como Rodar Localmente o Microserviço
