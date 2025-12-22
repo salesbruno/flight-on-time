@@ -4,6 +4,7 @@ Módulo responsável por análise de dados, preparação, criação do modelo pr
 
 ## 🗺️ Arquitetura do Projeto (End-to-End)
 ![Diagrama de Arquitetura](docs/diagrama.png)
+
 O fluxo de dados foi estruturado em quatro camadas principais:
 * **Ingestão:** Coleta de dados brutos e armazenamento em Google Cloud Storage.
 * **Processamento & ETL:** Limpeza e estruturação dos dados utilizando BigQuery e SQL.
@@ -31,7 +32,7 @@ O objetivo é prever se um voo será **Pontual (0)** ou **Atrasado (1)** com bas
 
 ---
 
-🧠 3. Tecnologias Utilizadas
+## 🧠 3. Tecnologias Utilizadas
 Linguagem: Python 3.10+
 
 Manipulação de Dados: Pandas, NumPy
@@ -60,23 +61,26 @@ json
   "distancia": "float"
 }
 ```
+
 ---
 
 ## 🧪 5. Pipeline de Desenvolvimento
 
-1. **EDA**: Identificação de padrões e análise de features (Notebook `eda_model.ipynb`).
-2. **Feature Engineering**: Criação de variáveis de tempo e volume de tráfego.
-3. **Treinamento**: Modelo Random Forest salvo via Joblib.
+1. EDA: Identificação de padrões no notebook eda_model.ipynb.
 
-> [cite_start]**📌 Nota:** O arquivo deve ser salvo obrigatoriamente no diretório: `datascience/model/modelo_atraso_voo.joblib`[cite: 35, 93].
->
-> [cite_start]**⚠️ Importante:** O link externo do Drive é para fins exclusivos de **demonstração** durante o Hackathon.
+2. Feature Engineering: Criação de variáveis de tempo e tráfego.
 
-4. [cite_start]**FastAPI**: O arquivo `app.py` carrega o modelo e retorna a previsão (0 ou 1) junto à probabilidade associada[cite: 53, 98].
+3. Treinamento: Modelo Random Forest salvo via Joblib.
+
+  📌 Nota: O arquivo deve ser salvo obrigatoriamente em: datascience/model/modelo_atraso_voo.joblib.
+
+  ⚠️ Importante: O link externo do Drive é para fins exclusivos de demonstração.
+
+4. FastAPI: O arquivo app.py carrega o modelo e retorna a previsão e probabilidade.
+
 ---
 
-
-⚙️ 6. Como Rodar Localmente o Microserviço
+## ⚙️ 6. Como Rodar Localmente o Microserviço
 
 ```
 Bash
@@ -86,11 +90,14 @@ uvicorn app:app --reload --port 8000
 Endpoint principal: POST /predict-model
 ```
 
-🐳 6. Deploy e Docker
+---
+
+## 🐳 7. Deploy e Docker
 O serviço está preparado para rodar em containers Docker, facilitando o deploy na Oracle Cloud (OCI). As configurações de Dockerfile e docker-compose garantem a escalabilidade do ambiente.
+
+---
 
 👥 Responsável e Autoria
 Este módulo de Data Science e Engenharia de Dados foi desenvolvido por:
-
 Sueli da Hora — Analytics Engineer (Modelagem, SQL e Arquitetura).
 
