@@ -1,5 +1,6 @@
 package com.flightontime.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.flightontime.dto.VooRequest;
 import com.flightontime.dto.VooResponse;
 import com.flightontime.service.VooService;
@@ -18,8 +19,8 @@ public class VooController {
     }
 
     @PostMapping
-    public ResponseEntity<VooResponse> prever(@Valid @RequestBody VooRequest request) {
-        VooResponse resposta = vooService.prever(request);
+    public ResponseEntity<VooResponse> predict(@Valid @RequestBody VooRequest request) throws JsonProcessingException {
+        VooResponse resposta = vooService.predict(request);
         return ResponseEntity.ok(resposta);
     }
 }

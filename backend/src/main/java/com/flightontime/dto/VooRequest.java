@@ -1,42 +1,45 @@
 package com.flightontime.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.time.LocalDateTime;
+
+@Getter
+@Setter
 public class VooRequest {
 
-    @NotBlank(message = "companhia é obrigatória")
-    private String companhia;
+    @NotBlank(message = "Companhia é obrigatória")
+    @JsonProperty("companhia")
+    private String company;
 
-    @NotBlank(message = "origem é obrigatória")
-    private String origem;
+    @NotBlank(message = "Aeroporto de origem é obrigatório")
+    @JsonProperty("origem")
+    private String origin;
 
-    @NotBlank(message = "destino é obrigatória")
-    private String destino;
+    @NotBlank(message = "Aeroporto de destino é obrigatório")
+    @JsonProperty("destino")
+    private String destination;
 
-    @NotBlank(message = "data_partida é obrigatória")
-    private String data_partida; // formato ISO 8601
+    @NotNull(message = "Data da Partida é obrigatória")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @JsonProperty("data_partida")
+    private LocalDateTime departureDate;
 
-    @Min(value = 1, message = "distancia_km deve ser >= 1")
-    private int distancia_km;
+    @Min(value = 1, message = "Distância deve ser >= 1")
+    @JsonProperty("distancia_km")
+    private int distanceKm;
 
-    public String getCompanhia() {
-        return companhia;
-    }
+    @NotBlank(message = "Falta Estado de Origem")
+    @JsonProperty("estado_origem")
+    private String stateOrigin;
 
-    public String getOrigem() {
-        return origem;
-    }
-
-    public String getDestino() {
-        return destino;
-    }
-
-    public String getData_partida() {
-        return data_partida;
-    }
-
-    public int getDistancia_km() {
-        return distancia_km;
-    }
+    @NotBlank(message = "Falta Estado de Destino")
+    @JsonProperty("estado_destino")
+    private String stateDestination;
 }

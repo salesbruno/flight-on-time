@@ -1,15 +1,14 @@
 package com.flightontime.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class VooResponse {
-    private String previsao;
-    private double probabilidade;
-
-    public VooResponse(String previsao, double probabilidade) {
-        this.previsao = previsao;
-        this.probabilidade = probabilidade;
-    }
+    @JsonProperty("previsao")
+    private String prediction;
+    @JsonProperty("probabilidade")
+    private double probability;
 }

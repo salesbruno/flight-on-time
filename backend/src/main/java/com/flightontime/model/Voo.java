@@ -3,14 +3,16 @@ package com.flightontime.model;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "voo")
+@Table(name = "voos")
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor
 public class Voo {
 
@@ -18,33 +20,28 @@ public class Voo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 3, nullable = false)
-    private String companhia; // código da cia (ex.: AZ)
+    @Column(name =  "company", length = 2, nullable = false)
+    private String company; // (ex.: AZ)
 
-    @Column(length = 3, nullable = false)
-    private String origem;    // IATA (ex.: GIG)
+    @Column(name = "origin", length = 3, nullable = false)
+    private String origin;    // IATA (ex.: GIG)
 
-    @Column(length = 3, nullable = false)
-    private String destino;   // IATA (ex.: GRU)
+    @Column(name = "destination", length = 3, nullable = false)
+    private String destination;   // IATA (ex.: GRU)
 
-    @Column(name = "data_partida", nullable = false)
-    private LocalDateTime dataPartida;
+    @Column(name = "departure_date", nullable = false)
+    private LocalDateTime departureDate;
 
-    @Column(name = "distancia_km", nullable = false)
-    private Integer distanciaKm;
+    @Column(name = "distance_km", nullable = false)
+    private Integer distanceKM;
+
+    @Column(name = "state_destination", nullable = false)
+    private String stateDestitnation;
+
+    @Column(name = "state_origin", nullable = false)
+    private String stateOrigin;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
-
-    public Voo() {}
-
-    public Voo(String companhia, String origem, String destino,
-               LocalDateTime dataPartida, Integer distanciaKm) {
-        this.companhia = companhia;
-        this.origem = origem;
-        this.destino = destino;
-        this.dataPartida = dataPartida;
-        this.distanciaKm = distanciaKm;
-    }
 }
