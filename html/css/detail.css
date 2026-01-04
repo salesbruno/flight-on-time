@@ -1,0 +1,8 @@
+/* Caso precise de ajustes exclusivos para detalhes */
+.detail-box {
+    border: 1px solid var(--border);
+    padding: 15px;
+    border-radius: 6px;
+    background: var(--stripe);
+    margin-top: 20px;
+}

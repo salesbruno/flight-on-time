@@ -1,0 +1,32 @@
+/* Container centralizado para a consulta */
+.container {
+  max-width: 600px;
+  margin: 40px auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Formulário em coluna */
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ajuste nos inputs */
+form input, form select {
+  margin-top: 4px;
+}
+
+/* Espaçamento entre os campos */
+form label {
+  margin-bottom: 12px; /* aumenta o espaço vertical */
+}
+
+/* Botão mais proporcional */
+form button {
+  align-self: flex-start; /* evita ocupar toda a largura */
+  padding: 8px 16px;      /* tamanho mais equilibrado */
+  margin-top: 10px;       /* espaço antes do botão */
+}

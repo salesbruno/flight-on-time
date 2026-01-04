@@ -1,0 +1,9 @@
+/* Ajustes exclusivos de stats2 */
+.meta {
+    margin: 4px 0 16px;
+    color: var(--muted);
+}
+
+.right {
+    text-align: right;
+}

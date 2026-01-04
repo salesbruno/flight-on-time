@@ -1,0 +1,143 @@
+/* ===========================
+   Variáveis globais
+   =========================== */
+:root {
+    --bg: #fff;
+    --fg: #222;
+    --muted: #666;
+    --border: #ddd;
+    --stripe: #f9f9f9;
+    --head: #f2f2f2;
+    --accent: #0b6efd;
+    --error: #b00020;
+    --success: #28a745;
+    --danger: #dc3545;
+}
+
+/* ===========================
+   Estrutura básica
+   =========================== */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background: var(--bg);
+    color: var(--fg);
+}
+
+h1,
+h2 {
+    color: var(--fg);
+    margin-bottom: 15px;
+}
+
+/* ===========================
+   Controles (inputs, botões)
+   =========================== */
+.controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.controls label {
+    margin-right: 10px;
+    color: var(--muted);
+}
+
+.controls input {
+    padding: 6px 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+
+.controls button {
+    padding: 8px 12px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.controls button:hover {
+    background: #084298;
+}
+
+.controls button:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+/* ===========================
+   Tabelas
+   =========================== */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 20px;
+}
+
+th,
+td {
+    border: 1px solid var(--border);
+    padding: 8px;
+    text-align: center;
+}
+
+th {
+    background: var(--head);
+    font-weight: 600;
+}
+
+tr:nth-child(even) {
+    background: var(--stripe);
+}
+
+/* ===========================
+   Canvas / gráficos
+   =========================== */
+canvas {
+    margin-top: 20px;
+    max-height: 300px;
+}
+
+/* ===========================
+   Mensagens / status
+   =========================== */
+.status {
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.error {
+    color: var(--error);
+}
+
+/* ===========================
+   Cards de resultado (consulta)
+   =========================== */
+.resultado-card {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 6px;
+    font-size: 1.2em;
+    text-align: center;
+    font-weight: bold;
+    display: none;
+    /* começa escondido */
+    color: #fff;
+}
+
+.pontual {
+    background-color: var(--success);
+}
+
+.atrasado {
+    background-color: var(--danger);
+}
+
+.erro {
+    background-color: var(--muted);
+}
