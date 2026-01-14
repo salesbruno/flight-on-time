@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Previsão de Voo</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/consulta.css">
+</head>
+
+<body>
+  <h1>Previsão de Voo ✈️</h1>
+
+  <form id="vooForm">
+    <label>Companhia:
+      <select name="companhia" id="companhiaSelect" required></select>
+    </label>
+    <label>Origem:
+      <select name="origem" id="origemSelect" required></select>
+    </label>
+    <label>Destino:
+      <select name="destino" id="destinoSelect" required></select>
+    </label>
+    <label>Estado Origem:
+      <input id="estadoOrigem" name="estado_origem" readonly required>
+    </label>
+    <label>Estado Destino:
+      <input id="estadoDestino" name="estado_destino" readonly required>
+    </label>
+    <label>Data Partida:
+      <input type="datetime-local" name="data_partida" required>
+    </label>
+    <label>Distância (km):
+      <input type="number" id="distancia_km" name="distancia_km" min="1" readonly required>
+    </label>
+    <button type="submit">Enviar</button>
+  </form>
+
+  <div id="resultado" class="resultado-card"></div>
+
+  <script src="../js/consulta.js"></script>
+</body>
+
+</html>
