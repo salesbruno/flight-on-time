@@ -4,21 +4,26 @@ from joblib import load
 import pandas as pd
 import json
 from datetime import datetime
+from pathlib import Path
 
 app = FastAPI()
 
-# Carrega o modelo ao iniciar a app
-try:
-    model = load("C:/Users/Márcio/Desktop/Flight/flight-on-time/datascience/model/modelo_atraso_voo_v1.joblib")
-except Exception as e:
-    raise RuntimeError(f"Falha ao carregar modelo: {e}")
+BASE_DIR = Path(__file__).resolve().parent  
+MODEL_DIR = BASE_DIR.parent / "model"            
 
-# Carrega o mapeamento de categorias
+MODEL_PATH = MODEL_DIR / "modelo_atraso_voo_v1.joblib"
+MAPPING_PATH = MODEL_DIR / "mapeamento_categorias_v1.json"
+
 try:
-    with open("C:/Users/Márcio/Desktop/Flight/flight-on-time/datascience/model/mapeamento_categorias_v1.json", "r") as f:
+    model = load(MODEL_PATH)
+except Exception as e:
+    raise RuntimeError(f"Falha ao carregar modelo em {MODEL_PATH}: {e}")
+
+try:
+    with open(MAPPING_PATH, "r", encoding="utf-8") as f:
         mapping = json.load(f)
 except Exception as e:
-    raise RuntimeError(f"Falha ao carregar mapeamento: {e}")
+    raise RuntimeError(f"Falha ao carregar mapeamento em {MAPPING_PATH}: {e}")
 
 # JSON esperado
 class Voo(BaseModel):
@@ -30,8 +35,9 @@ class Voo(BaseModel):
     distancia_km: int
     data_partida: datetime
 
+
 def preprocess(voo: Voo) -> pd.DataFrame:
-    #dt = datetime.fromisoformat(voo.data_partida)
+    # dt = datetime.fromisoformat(voo.data_partida)
     dt = voo.data_partida
 
     data = {
@@ -43,7 +49,7 @@ def preprocess(voo: Voo) -> pd.DataFrame:
         "dest": mapping["dest"].get(voo.destino, -1),
         "dest_state_nm": mapping["dest_state_nm"].get(voo.estado_destino, -1),
         "crs_dep_time": dt.hour * 100 + dt.minute,  # formato HHMM
-        "distance": voo.distancia_km
+        "distance": voo.distancia_km,
     }
 
     col_order = list(model.feature_names_in_)
@@ -54,6 +60,7 @@ def preprocess(voo: Voo) -> pd.DataFrame:
     print("Valores do DF:", df.iloc[0].to_dict())
 
     return df
+
 
 @app.post("/predict-model")
 def predict(voo: Voo) -> float:
