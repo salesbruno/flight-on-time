@@ -49,7 +49,7 @@ def preprocess(voo: Voo) -> pd.DataFrame:
         "dest": mapping["dest"].get(voo.destino, -1),
         "dest_state_nm": mapping["dest_state_nm"].get(voo.estado_destino, -1),
         "crs_dep_time": dt.hour * 100 + dt.minute,  # formato HHMM
-        "distance": voo.distancia_km,
+        "distance": voo.distancia_km * 0.621371 # converter km para milhas
     }
 
     col_order = list(model.feature_names_in_)
