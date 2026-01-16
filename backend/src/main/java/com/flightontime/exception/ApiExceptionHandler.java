@@ -1,6 +1,9 @@
 package com.flightontime.exception;
 
-import jakarta.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -11,9 +14,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import com.flightontime.exception.dto.ApiError;
 
-import java.time.LocalDateTime;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
@@ -31,9 +32,21 @@ public class ApiExceptionHandler {
                 "Bad Request",
                 "Erro de validação",
                 req.getRequestURI(),
-                fields
-        );
+                fields);
         return ResponseEntity.badRequest().body(body);
+    }
+
+    @ExceptionHandler(PredictionServiceUnavailableException.class)
+    public ResponseEntity<ApiError> handlePredictionUnavailable(PredictionServiceUnavailableException ex,
+            HttpServletRequest req) {
+        ApiError body = new ApiError(
+                LocalDateTime.now(),
+                503,
+                HttpStatus.SERVICE_UNAVAILABLE.getReasonPhrase(),
+                ex.getMessage(),
+                req.getRequestURI(),
+                null);
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(body);
     }
 
     @ExceptionHandler(WebClientResponseException.class)
@@ -44,8 +57,7 @@ public class ApiExceptionHandler {
                 ex.getStatusText(),
                 "Erro ao chamar serviço de predição",
                 req.getRequestURI(),
-                null
-        );
+                null);
         return ResponseEntity.status(ex.getStatusCode()).body(body);
     }
 
@@ -57,8 +69,7 @@ public class ApiExceptionHandler {
                 "Internal Server Error",
                 "Erro inesperado",
                 req.getRequestURI(),
-                null
-        );
+                null);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
     }
 }
