@@ -46,10 +46,11 @@ public class SecurityConfiguration {
                         // Endpoints públicos da API
                         .requestMatchers(HttpMethod.POST, "/predict/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/airports/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/airports-distance/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/companies/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/delay-stats/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/stats/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/import/**").permitAll()
-
                         // Login (se existir)
                         .requestMatchers("/login/**").permitAll()
 
