@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Estatísticas por Região</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/stats2.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    
+  </style>
+</head>
+<body>
+  <h1>Estatísticas de Probabilidade por Região ✈️</h1>
+
+  <div class="controls">
+    <label>Start:
+      <input id="start" type="datetime-local" value="2024-05-15T00:00" />
+    </label>
+    <label>End:
+      <input id="end" type="datetime-local" value="2024-05-15T00:10" />
+    </label>
+    <button id="load">Carregar Estatísticas</button>
+  </div>
+
+  <div id="meta"></div>
+
+  <table id="table">
+    <thead>
+      <tr>
+        <th>Estado Origem</th>
+        <th>Total de Voos</th>
+        <th>Média Prob. Atraso %</th>
+        <th>Mínimo %</th>
+        <th>Máximo %</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <canvas id="chartRegion"></canvas>
+
+  <script src="../js/stats2.js"></script>
+</body>
+</html>

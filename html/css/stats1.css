@@ -1,0 +1,10 @@
+/* Ajustes exclusivos de stats1 */
+.legend {
+    margin-bottom: 12px;
+    padding: 8px;
+    border: 1px solid var(--border);
+    background: var(--stripe);
+    font-size: 13px;
+    color: var(--muted);
+    border-radius: 4px;
+}

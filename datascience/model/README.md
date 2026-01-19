@@ -1,32 +1,22 @@
 # Modelo de Predição Treinado - FlightOnTime
 
-Este diretório contém os artefatos de inteligência artificial do projeto, incluindo o modelo preditivo e os transformadores de dados necessários para a inferência.
+Este diretório contém o acesso ao artefato final do modelo de inteligência artificial desenvolvido para a predição de atrasos de voos.
 
-## 🔗 Downloads Obrigatórios (Arquivos no Google Drive)
+### 🔗 Download do Modelo
+Devido a limitações de processamento de arquivos binários (.joblib) via interface web do GitHub (Erro 400), o modelo foi disponibilizado via Google Drive para garantir a integridade do arquivo:
 
-Devido ao tamanho dos arquivos binários, eles devem ser baixados nos links abaixo e colocados nesta pasta (`/datascience/model/`):
-
-* 📦 [**Baixar: modelo_atraso_voo.joblib**](https://drive.google.com/file/d/1jwScHPdoveOBGXMXaugEnDdGgqQtursp/view?usp=sharing)
-* 📑 [**Baixar: encoders_voo.joblib**](https://drive.google.com/file/d/10I1svImKYBN_PSE-OgoKIYEqD8jWQdpa/view?usp=sharing)
+👉 [**Baixar modelo_atraso_voo.joblib**](https://drive.google.com/file/d/1jwScHPdoveOBGXMXaugEnDdGgqQtursp/view?usp=sharing)
 
 ---
 
-## 📋 Contrato de Dados (Integração com a API)
+### 🛠️ Como carregar o modelo (Python)
+Para integrar este modelo em sua aplicação ou API, certifique-se de ter a biblioteca `joblib` instalada e utilize o código abaixo:
 
-Para realizar predições utilizando estes artefatos, a API (`/datascience/service/app.py`) espera o seguinte esquema de dados, garantindo a integridade da comunicação com o Backend:
+```python
+import joblib
 
-| Campo | Descrição | Exemplo |
-| :--- | :--- | :--- |
-| `companhia` | Sigla da linha aérea | "AA" |
-| `origem` | Código IATA do aeroporto de origem | "JFK" |
-| `estado_origem` | Sigla do estado (UF) de origem | "NY" |
-| `destino` | Código IATA do aeroporto de destino | "LAX" |
-| `estado_destino` | Sigla do estado (UF) de destino | "CA" |
-| `distancia` | Distância total do voo (numérico) | 3977.0 |
-| `hora_partida_prevista` | Horário (formato HHMM) | 1430 |
+# Após realizar o download do arquivo, carregue-o no seu ambiente
+modelo_final = joblib.load('modelo_atraso_voo.joblib')
 
----
-
-## 🛠️ Lógica de Resiliência (Blindagem OOV)
-
-O pipeline de inferência implementa um sistema de blindagem contra dados desconhecidos. Caso receba uma categoria que não constava no treinamento original, o sistema utiliza o valor padrão `-1`. Isso garante a robustez do microserviço, evitando falhas críticas e permitindo a continuidade da operação.
+# O modelo está pronto para realizar predições
+# predicao = modelo_final.predict(dados_de_entrada)

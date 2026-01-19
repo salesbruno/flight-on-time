@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Relatório de Voos</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/detail.css">
+</head>
+<body>
+  <h1>Relatório de Voos</h1>
+  <div class="controls">
+    <label>Start:
+      <input id="start" type="datetime-local" value="2024-05-15T00:00" />
+    </label>
+    <label>End:
+      <input id="end" type="datetime-local" value="2024-05-15T00:10" />
+    </label>
+    <button id="load">Carregar Relatório</button>
+  </div>
+
+  <div class="meta" id="meta">Período: — | Total de voos: —</div>
+
+  <div class="legend">
+    <strong>Legenda:</strong><br>
+        0.00 – 0.30 → Baixa probabilidade de atraso<br>
+        0.31 – 0.60 → Probabilidade média de atraso<br>
+        0.61 – 1.00 → Alta probabilidade de atraso
+  </div>
+
+  <table id="table">
+    <thead>
+      <tr>
+        <th>Data partida</th>
+        <th>Estado origem</th>
+        <th>Origem</th>
+        <th>Destino</th>
+        <th>Companhia</th>
+        <th>Estado destino</th>
+        <th>Distância (km)</th>
+        <th>Probabilidade de atraso %</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div class="status" id="status"></div>
+
+  <script src="../js/detail.js"></script>
+</body>
+</html>

@@ -1,85 +1,75 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field
-import joblib
+from pydantic import BaseModel
+from joblib import load
 import pandas as pd
-import os
-from contextlib import asynccontextmanager
+import json
+from datetime import datetime
+from pathlib import Path
 
-# 1. Definição do Esquema de Dados (Contrato da API com Validação)
-class FlightInput(BaseModel):
+app = FastAPI()
+
+BASE_DIR = Path(__file__).resolve().parent  
+MODEL_DIR = BASE_DIR.parent / "model"            
+
+MODEL_PATH = MODEL_DIR / "modelo_atraso_voo_v1.joblib"
+MAPPING_PATH = MODEL_DIR / "mapeamento_categorias_v1.json"
+
+try:
+    model = load(MODEL_PATH)
+except Exception as e:
+    raise RuntimeError(f"Falha ao carregar modelo em {MODEL_PATH}: {e}")
+
+try:
+    with open(MAPPING_PATH, "r", encoding="utf-8") as f:
+        mapping = json.load(f)
+except Exception as e:
+    raise RuntimeError(f"Falha ao carregar mapeamento em {MAPPING_PATH}: {e}")
+
+# JSON esperado
+class Voo(BaseModel):
     companhia: str
     origem: str
-    estado_origem: str = Field(..., max_length=2)
     destino: str
-    estado_destino: str = Field(..., max_length=2)
-    distancia: float
-    hora_partida_prevista: int
+    estado_origem: str
+    estado_destino: str
+    distancia_km: int
+    data_partida: datetime
 
-# 2. Gerenciador de Ciclo de Vida para carregamento dos Modelos
-assets = {}
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Lógica de Inicialização: Define caminhos e carrega arquivos joblib
-    base_path = os.path.dirname(__file__)
-    model_path = os.path.abspath(os.path.join(base_path, "..", "model", "modelo_atraso_voo.joblib"))
-    encoder_path = os.path.abspath(os.path.join(base_path, "..", "model", "encoders_voo.joblib"))
-    
+def preprocess(voo: Voo) -> pd.DataFrame:
+    # dt = datetime.fromisoformat(voo.data_partida)
+    dt = voo.data_partida
+
+    data = {
+        "month": dt.month,
+        "day_of_week": dt.weekday(),  # segunda=0, domingo = 6
+        "op_unique_carrier": mapping["op_unique_carrier"].get(voo.companhia, -1),
+        "origin": mapping["origin"].get(voo.origem, -1),
+        "origin_state_nm": mapping["origin_state_nm"].get(voo.estado_origem, -1),
+        "dest": mapping["dest"].get(voo.destino, -1),
+        "dest_state_nm": mapping["dest_state_nm"].get(voo.estado_destino, -1),
+        "crs_dep_time": dt.hour * 100 + dt.minute,  # formato HHMM
+        "distance": voo.distancia_km * 0.621371 # converter km para milhas
+    }
+
+    col_order = list(model.feature_names_in_)
+    df = pd.DataFrame([[data[c] for c in col_order]], columns=col_order)
+
+    print("Features esperadas pelo modelo:", model.feature_names_in_)
+    print("Colunas do DF:", df.columns.tolist())
+    print("Valores do DF:", df.iloc[0].to_dict())
+
+    return df
+
+
+@app.post("/predict-model")
+def predict(voo: Voo) -> float:
     try:
-        assets["modelo"] = joblib.load(model_path)
-        assets["encoders"] = joblib.load(encoder_path)
-        print("INFO: Artefatos de ML carregados com sucesso.")
+        X = preprocess(voo)
+        if hasattr(model, "predict_proba"):
+            prob = float(model.predict_proba(X)[:, 1][0])
+            return prob
+        y = float(model.predict(X)[0])
+        return y
     except Exception as e:
-        print(f"CRITICAL: Falha ao carregar modelos: {e}")
-        raise RuntimeError("O servidor não pode iniciar sem os modelos.")
-    
-    yield
-    # Limpeza ao desligar o servidor
-    assets.clear()
-
-# Inicialização da aplicação com metadados profissionais
-app = FastAPI(
-    title="FlightOnTime - Predict Service",
-    description="API de predição de atrasos de voos - Projeto Lighthouse",
-    version="1.0.0",
-    lifespan=lifespan
-)
-
-@app.post("/predict-model", status_code=200)
-async def predict(data: FlightInput):
-    """
-    Realiza a predição de atraso com base em dados validados.
-    Implementa lógica de resiliência (OOV) para novas categorias.
-    """
-    modelo = assets.get("modelo")
-    encoders = assets.get("encoders")
-
-    try:
-        # Converte a entrada Pydantic em DataFrame
-        input_data = data.model_dump()
-        df = pd.DataFrame([input_data])
-
-        # Processamento de Encoders com tratamento de categorias desconhecidas (Blindagem)
-        for col, le in encoders.items():
-            valor = str(df[col].values[0])
-            if valor in le.classes_:
-                df[col] = le.transform([valor])
-            else:
-                # Caso a categoria seja nova (Ex: aeroporto novo), usa o marcador padrão
-                df[col] = -1
-
-        # Inferência do Modelo
-        prediction = int(modelo.predict(df)[0])
-        probability = float(modelo.predict_proba(df)[0][1])
-
-        return {
-            "status": "sucesso",
-            "resultado": {
-                "previsao": "Atrasado" if prediction == 1 else "Pontual",
-                "probabilidade_atraso": round(probability, 4),
-                "classe_id": prediction
-            }
-        }
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erro interno na inferência: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"Erro na predição: {e}")
