@@ -1,192 +1,74 @@
-# ✈️ Microserviço de Previsão — flight-on-time
+# ✈️ Microserviço de Predição — FlightOnTime
 
-Microserviço FastAPI responsável por:
+Este microserviço é responsável por realizar inferências em tempo real sobre o atraso de voos, utilizando artefatos de Machine Learning (Scikit-Learn/Joblib) integrados a uma interface de alto desempenho com **FastAPI**.
 
-* carregar o modelo `.joblib` treinado
-* receber dados de voo via POST
-* processar features
-* gerar previsão (0 = Pontual, 1 = Atrasado)
-* retornar probabilidade
+## 📋 1. Contrato de Dados (Interface de Comunicação)
 
-O backend Java consultará **esse serviço** para fazer previsões.
+A API utiliza **Pydantic v2** para validação rigorosa no *entrypoint*. Isso garante que os dados cheguem ao modelo no formato correto, evitando falhas de processamento.
+
+### Definição dos Campos
+| Campo | Tipo | Descrição | Exemplo |
+| :--- | :--- | :--- | :--- |
+| `companhia` | `string` | Sigla da linha aérea (IATA) | "AZL" |
+| `origem` | `string` | Código IATA do aeroporto de origem | "VCP" |
+| `estado_origem` | `string` | **UF (Exatamente 2 caracteres)** | "SP" |
+| `destino` | `string` | Código IATA do aeroporto de destino | "GIG" |
+| `estado_destino` | `string` | **UF (Exatamente 2 caracteres)** | "RJ" |
+| `distancia` | `float` | Distância entre aeroportos | 450.0 |
+| `hora_partida_prevista` | `int` | Horário militar (HHMM) | 1430 |
+
+### Exemplo de Requisição (POST `/predict-model`)
+```json
+{
+  "companhia": "AZL",
+  "origem": "VCP",
+  "estado_origem": "SP",
+  "destino": "GIG",
+  "estado_destino": "RJ",
+  "distancia": 450.0,
+  "hora_partida_prevista": 1430
+}
+```
+---
+## 🛠️ 2. Lógica de Resiliência (Blindagem OOV)
+Implementamos uma lógica de Out-of-Vocabulary (OOV) para garantir a estabilidade do sistema:
+Funcionamento: Se a API receber uma categoria (aeroporto, companhia ou estado) que não constava no treinamento, o sistema atribui o valor -1.
+Benefício: Evita falhas críticas (Erro 500) e permite que o modelo realize a predição baseada nas demais variáveis numéricas.
 
 ---
-
-# 📘 1. Estrutura do Microserviço
-
-```
-service/
-│── app.py                 → código principal FastAPI
-│── requirements.txt       → dependências Python
-│── modelo_voo.joblib      → arquivo exportado (gerado após treinamento)
-│── README_MICROSERVICE.md → este documento
-```
-
----
-
-# 🔧 2. Como Rodar Localmente
-
-### Passo 1 — Instalar dependências
-
-```
-pip install -r requirements.txt
-```
-
-### Passo 2 — Rodar o servidor
-
-```
-uvicorn app:app --reload --host 0.0.0.0 --port 8000
-```
-
-### Acessar documentação automática:
-
-```
-http://localhost:8000/docs
-```
+## 📂 3. Estrutura do Projeto
+.
+├── model/
+│   ├── modelo_atraso_voo.joblib  # Modelo Preditivo
+│   └── encoders_voo.joblib       # Label Encoders
+└── service/
+    ├── app.py                    # Core da API
+    ├── requirements.txt          # Dependências
+    └── README.md                 # Esta documentação
 
 ---
-
-# 🧠 3. Estrutura Base do `app.py`
+## 🐍 4. Código-Fonte Otimizado (app.py)
+O serviço utiliza o gerenciador de ciclo de vida (lifespan) para garantir que os modelos sejam carregados apenas uma vez na inicialização, otimizando o uso de memória.
 
 ```python
-from fastapi import FastAPI
-import joblib
-import pandas as pd
-
-app = FastAPI()
-
-# Carregamento do modelo (ajustado após treinamento)
-# modelo = joblib.load("../model/modelo_voo.joblib")
-
-@app.get("/")
-def root():
-    return {"status": "microserviço funcionando"}
-
+# Trecho principal do entrypoint
 @app.post("/predict-model")
-def predict(data: dict):
-    """
-    data esperado:
-    {
-      "companhia": "AZ",
-      "origem": "GIG",
-      "destino": "GRU",
-      "data_partida": "2025-11-10T14:30:00",
-      "distancia_km": 350
-    }
-    """
-
-    # TODO: converter entrada em features corretas
-    # exemplo_x = converter_para_features(data)
-
-    # TODO: usar modelo
-    # pred = modelo.predict([exemplo_x])[0]
-    # prob = modelo.predict_proba([exemplo_x])[0][1]
-
-    return {
-        "previsao": "pendente",
-        "probabilidade": 0.0
-    }
+async def predict(data: FlightInput):
+    # Conversão para DataFrame (Necessário para o Scikit-Learn)
+    df = pd.DataFrame([data.model_dump()])
+    
+    # Lógica de Blindagem OOV
+    for col, le in encoders.items():
+        valor = str(df[col].values[0])
+        df[col] = le.transform([valor]) if valor in le.classes_ else -1
 ```
+##📦 5. Dependências (requirements.txt)
 
-Depois vamos substituir os **TODOs** pelo processamento real.
-
----
-
-# 🧩 4. Formato esperado da entrada
-
-O backend Java envia:
-
-```json
-{
-  "companhia": "AZ",
-  "origem": "GIG",
-  "destino": "GRU",
-  "data_partida": "2025-11-10T14:30:00",
-  "distancia_km": 350
-}
+```plaintext
+fastapi==0.109.0
+uvicorn==0.27.0
+pandas==2.2.0
+joblib==1.3.2
+pydantic==2.6.0
+scikit-learn
 ```
-
----
-
-# 🧪 5. Formato esperado da resposta
-
-```json
-{
-  "previsao": "Atrasado",
-  "probabilidade": 0.78
-}
-```
-
----
-
-# 🔌 6. Integração com o Backend Java
-
-O backend chamará o endpoint via HTTP:
-
-```
-POST http://localhost:8000/predict-model
-```
-
-Ou, no ambiente de produção (OCI):
-
-```
-POST http://IP_DA_VM_OCI:8000/predict-model
-```
-
----
-
-# 🐳 7. Rodando com Docker
-
-O microserviço será incluído no `docker-compose.yml`:
-
-```yaml
-microservice:
-  build: ./datascience/service
-  container_name: flight_microservice
-  ports:
-    - "8000:8000"
-```
-
-Exemplo de Dockerfile:
-
-```dockerfile
-FROM python:3.10
-
-WORKDIR /app
-COPY . .
-RUN pip install --no-cache-dir -r requirements.txt
-
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
-```
-
----
-
-# ☁️ 8. Deploy na OCI (resumo)
-
-1. Criar VM
-2. Instalar Docker + Docker Compose
-3. Copiar o microserviço para a VM
-4. Rodar:
-
-```
-docker-compose up -d microservice
-```
-
-5. Liberar porta 8000 no firewall da OCI
-
----
-
-# ✔️ 9. Checklist para produção
-
-* modelo `.joblib` está dentro da pasta `model`
-* app.py faz o carregamento correto
-* conversão de features está implementada
-* porta está liberada
-* docker-compose configurado
-
----
-
-# 👨‍💻 10. Responsável
-
-Time de Data Science / MLOps
-Acompanhamento: **Darlei**

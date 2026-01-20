@@ -1,0 +1,16 @@
+/* Ajustes exclusivos de stats3 */
+.stats-box {
+    border: 1px solid #ccc;
+    padding: 12px;
+    margin-top: 20px;
+    background: #f9f9f9;
+    border-radius: 6px;
+}
+
+.stats-box h2 {
+    margin-top: 0;
+}
+
+.stats-box p {
+    margin: 6px 0;
+}
