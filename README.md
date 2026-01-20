@@ -60,9 +60,9 @@ flight-on-time
 * Spring Boot 3.2
 * Spring Web
 * Spring Data JPA
-* H2 (dev) + PostgreSQL (prod / OCI)
+* H2 (dev) + PostgreSQL 16 (prod / OCI)
 * OpenAPI (Swagger)
-* Docker / Docker Compose
+* Docker / Docker Compose.
 
 ### 🧠 **Data Science**
 
