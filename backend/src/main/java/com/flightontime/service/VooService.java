@@ -1,5 +1,6 @@
 package com.flightontime.service;
 
+import com.flightontime.dto.PredictModelResponse;
 import com.flightontime.dto.VooRequest;
 import com.flightontime.dto.VooResponse;
 import com.flightontime.exception.PredictionServiceUnavailableException;
@@ -29,23 +30,23 @@ public class VooService {
         this.webClient = webClientBuilder.baseUrl(fastApiUrl).build();
     }
 
-    // Envia para Modelo salva no banco
+    // Envia para Modelo + salva no banco
     public VooResponse predict(VooRequest request) {
         try {
-            Double probability = webClient.post()
+            PredictModelResponse dsResponse = webClient.post()
                     .bodyValue(request)
                     .retrieve()
-                    .bodyToMono(Double.class)
+                    .bodyToMono(PredictModelResponse.class)
                     .timeout(Duration.ofSeconds(5))
                     .block();
 
-            if (probability == null) {
+            if (dsResponse == null || dsResponse.probability() == null) {
                 throw new PredictionServiceUnavailableException("Serviço de predição retornou vazio");
             }
 
+            Double probability = dsResponse.probability();
             String prediction = probability >= threshold ? "Atrasado" : "Pontual";
 
-            // Persistência
             Voo voo = new Voo();
             voo.setCompany(request.getCompany());
             voo.setOrigin(request.getOrigin());
@@ -63,7 +64,6 @@ public class VooService {
             return new VooResponse(prediction, probability);
 
         } catch (WebClientResponseException ex) {
-            // DS respondeu com status != 2xx
             throw new PredictionServiceUnavailableException("Erro ao chamar serviço de predição", ex);
         } catch (Exception ex) {
             throw new PredictionServiceUnavailableException("Serviço de predição indisponível", ex);
