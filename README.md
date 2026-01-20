@@ -42,6 +42,7 @@ Além disso:
 flight-on-time
 │── backend/                → API Java / Spring Boot
 │── datascience/            → Modelo ML + Microserviço FastAPI
+│── frontend                → Modelo de interface
 │── oci/                    → Scripts e guias de deploy na Oracle Cloud
 │── docs/                   → Briefing, timeline, arquitetura e dailies
 │── .github/                → PR templates, issues, contributing
