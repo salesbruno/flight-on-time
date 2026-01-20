@@ -17,11 +17,13 @@ import java.util.List;
 public class SecurityConfiguration {
 
     /*
-     * Se formos usar JWT e ainda é necessário criar a Classe SecurityFilter
+     * Se formos usar JWT, ainda será necessário criar a classe SecurityFilter
+     * e injetar aqui, por exemplo:
+     *
      * private final SecurityFilter securityFilter;
-     * 
+     *
      * public SecurityConfiguration(SecurityFilter securityFilter) {
-     * this.securityFilter = securityFilter;
+     *     this.securityFilter = securityFilter;
      * }
      */
 
@@ -37,10 +39,10 @@ public class SecurityConfiguration {
                         .requestMatchers(
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**")
-                        .permitAll()
+                                "/v3/api-docs/**"
+                        ).permitAll()
 
-                        // Preflight
+                        // Preflight (CORS)
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         // Endpoints públicos da API
@@ -49,23 +51,32 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/airports-distance/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/companies/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/delay-stats/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/stats").permitAll()
                         .requestMatchers(HttpMethod.GET, "/stats/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/import/**").permitAll()
+
                         // Login (se existir)
                         .requestMatchers("/login/**").permitAll()
 
-                        // Qualquer outra coisa precisa de auth
-                        .anyRequest().authenticated())
+                        // Enquanto NÃO houver autenticação implementada:
+                        .anyRequest().permitAll()
+
+                        // Quando implementar autenticação/JWT, troque a linha acima por:
+                        // .anyRequest().authenticated()
+                )
                 .build();
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://127.0.0.1:5500", "http://localhost:5500"));
+        config.setAllowedOrigins(List.of(
+                "http://127.0.0.1:5500",
+                "http://localhost:5500"
+        ));
         config.addAllowedMethod("*"); // inclui OPTIONS, GET, POST, etc.
         config.addAllowedHeader("*");
-        config.setAllowCredentials(true); // útil se futuramente enviar Authorization/cookies
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
